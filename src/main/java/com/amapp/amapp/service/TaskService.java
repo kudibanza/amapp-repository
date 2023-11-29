@@ -1,8 +1,10 @@
 package com.amapp.amapp.service;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import com.amapp.amapp.domain.Task;
 import com.amapp.amapp.domain.User;
@@ -10,6 +12,7 @@ import com.amapp.amapp.repository.TaskRepository;
 
 import jakarta.transaction.Transactional;
 
+@Service
 public class TaskService {
     @Autowired
     private TaskRepository taskRepository;
@@ -22,6 +25,11 @@ public class TaskService {
    
     }
 
+    public List<Task> findAllByUserId(Long userid){
+        List<Task> tasks=this.taskRepository.findByUser_Id(userid);
+        return tasks;
+    }
+
     @Transactional
     public Task Create(Task obj){
         User user=this.userService.findUserById(obj.getUser().getId());
@@ -32,7 +40,7 @@ public class TaskService {
     }
 
     @Transactional
-    public Task Upadte(Task obj){
+    public Task Update(Task obj){
         Task newobj=findTaskById(obj.getId());
         newobj.setDescription(obj.getDescription());
         return this.taskRepository.save(newobj);
@@ -46,5 +54,7 @@ public class TaskService {
         throw new RuntimeException("Não é possível excluir o objecto, porque está relacionado.");
         }
     }
+
+
 
 }//

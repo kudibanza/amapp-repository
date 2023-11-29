@@ -27,7 +27,7 @@ public class UserService {
     }
 
     @Transactional
-    public User uUpdate(User obj){
+    public User Update(User obj){
         obj.setId(null);//Garantido que seja auto
         User newobj=findUserById(obj.getId());
         newobj.setPassword(obj.getPassword());

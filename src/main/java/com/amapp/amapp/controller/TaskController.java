@@ -1,6 +1,7 @@
 package com.amapp.amapp.controller;
 
 import java.net.URI;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -15,43 +16,49 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import com.amapp.amapp.domain.User;
-import com.amapp.amapp.domain.User.CreateUser;
-import com.amapp.amapp.service.UserService;
+import com.amapp.amapp.domain.Task;
+import com.amapp.amapp.service.TaskService;
 
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping("/user")
+@RequestMapping("/task")
 @Validated
-public class UserController {
-   @Autowired //Injecção de Dependencia - para evitar criar o Construtor
-    private UserService userService;
-   
+public class TaskController {
+    @Autowired
+    private TaskService tService;
+
     @GetMapping("/{id}")
-    public ResponseEntity<User> findById(@PathVariable Long id){
-        User obj=userService.findUserById(id);
+    public ResponseEntity<Task> findById(@PathVariable Long id){
+        Task obj=this.tService.findTaskById(id);
         return ResponseEntity.ok().body(obj);
     }
+
     @PostMapping
-    @Validated(CreateUser.class)
-    public ResponseEntity<Void> Create(@Valid @RequestBody User obj){
-        this.userService.Create(obj);
+    @Validated
+    public ResponseEntity<Void> Create(@Valid @RequestBody Task obj){
+        this.tService.Create(obj);
         URI url=ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(obj.getId()).toUri();
         return ResponseEntity.created(url).build();
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Void> Upadate(@Valid @RequestBody User obj, @PathVariable Long id){
+    public ResponseEntity<Void> Upadate(@Valid @RequestBody Task obj, @PathVariable Long id){
         obj.setId(id);
-        this.userService.Update(obj);
+        this.tService.Update(obj);
         return ResponseEntity.noContent().build();
     }
    
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> Delete(@PathVariable Long id){
-        this.userService.Delete(id);
+        this.tService.Delete(id);
         return ResponseEntity.noContent().build();
     }
-
-}//
+ 
+    @GetMapping("/user/{userid}")
+    public ResponseEntity<List<Task>> findAllByUserId(@PathVariable Long userid){
+        List<Task> objs=this.tService.findAllByUserId(userid);
+        return ResponseEntity.ok().body(objs);
+    }
+    
+}
